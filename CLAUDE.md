@@ -29,22 +29,18 @@ pip install pandas numpy matplotlib statsmodels scikit-learn scipy jupyter
 
 ### Key design decisions
 
-- **Feature engineering (Step 1):** `perf_rel_t` is transformed into four piecewise-linear spline basis functions (`perf_rel_t_T1`–`T4`) at knots 2, 3, and 18. These are the forms used by the pre-estimated model, not the raw variable.
+- **Feature engineering (Step 1):** `time_since_obs` is transformed into four piecewise-linear spline basis functions (`perf_rel_t_T1`–`T4`) at knots 2, 3, and 18. These are the forms used by the pre-estimated model, not the raw variable.
 - **Default simulation (Step 2):** Gaussian noise is added to the logit score before ranking, so the top-5% default selection is probabilistic rather than purely deterministic. Exactly 500 of 10,000 rows are labelled as defaults.
-- **Model fitting (Step 3):** Uses all 11 columns from Step 1 as predictors (7 raw + 4 spline terms). `statsmodels.Logit` is used for the coefficient/p-value summary; `sklearn.LogisticRegression` is used for AUC-ROC and the ROC curve plot.
+- **Model fitting (Step 3):** Uses all 11 columns from Step 1 as predictors (7 raw + 4 spline terms). `statsmodels.GLM` is used for the coefficient/p-value summary; custormized functions are used for VIF, discriminative power and accuracy.
 
 ### Pre-estimated coefficients (from Image #3)
 
-| Feature | Coefficient |
-|---|---|
-| const | -7.1430 |
-| perf_rel_t_T1 | 1.9057 |
-| perf_rel_t_T2 | 0.0157 |
-| perf_rel_t_T3 | -0.0303 |
-| perf_rel_t_T4 | -0.0054 |
-| ecm_0106_tot_num_T | 0.2352 |
-| ecm_0601_tot_num_T | 0.0329 |
-| fico_snp_T | -0.0004 |
-| util_snp_T | 0.4751 |
-| num_la_snp_6mo_T | 0.1048 |
-| UR_M_3MGR_PIT_L6_NT | 3.3694 |
+| Feature | Description | Distribution |
+|---------|-------------|--------------|
+| `time_since_obs` | Month since observation month | Exponential(scale=25), clipped [1, 84] |
+| `ct_open_cards` | count of open cards after transformation | Normal(1.07, 0.60), clipped [0, 2.08] |
+| `ct_inquiries` | count of inquiries after transformation | Exponential(scale=2), clipped [0, 15] |
+| `fico` | FICO credit score after transformation| Normal(2825, 1495), clipped [442, 6132] |
+| `utilization` | utilisation ratio | Normal(1.74, 0.65), clipped [1.06, 2.87] |
+| `ct_latefee` | count of late fees in last 6 months after transformation | Poisson(λ=2), clipped [0, 5] |
+| `UR_M_3MGR_PIT_L6_NT` | Unemployment rate 3 month average change with 6 months lag  | Normal(-0.02, 0.038), clipped [-0.156, 0.204] |
