@@ -43,4 +43,4 @@ pip install pandas numpy matplotlib statsmodels scikit-learn scipy jupyter
 | `fico` | FICO credit score after transformation| Normal(2825, 1495), clipped [442, 6132] |
 | `utilization` | utilisation ratio | Normal(1.74, 0.65), clipped [1.06, 2.87] |
 | `ct_latefee` | count of late fees in last 6 months after transformation | Poisson(λ=2), clipped [0, 5] |
-| `UR_M_3MGR_PIT_L6_NT` | Unemployment rate 3 month average change with 6 months lag  | Normal(-0.02, 0.038), clipped [-0.156, 0.204] |
+| `UR_3MGR_L6` | Unemployment rate 3 month average change with 6 months lag  | Normal(-0.02, 0.038), clipped [-0.156, 0.204] |
